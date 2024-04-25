@@ -31,8 +31,29 @@ Do realizacji case study wykorzystana zostanie aplikacja biura turystycznego, po
 Integracja aplikacji z OPA zostanie wykonana przy użyciu standardowego kube-mgmt - komend i skryptów definiujących zasoby, polityki oraz ich wdrażanie w systemie. 
 
 ## Solution architecture
+### Architektura aplikacji biura turystycznego na Kubernetes
+Aplikacja biura turystycznego będzie działać w oparciu o środowisko Kubernetes, wykorzystując kontenery do izolacji oraz skalowalności. Architektura ta będzie obejmować:
+- Kontenery aplikacyjne: Kontenery zawierające aplikację biura turystycznego oraz jej składowe.
+- Serwery API: Serwisy API będą udostępniały funkcjonalności aplikacji.
+
+Pozostałe funkcjonalności związane z dostępem do aplikacji, jak i jej utrzymywaniem są rozwiązane poprzez Open Policy Agent, co zostało opisane poniżej.
+
+### Integracja OPA jako Admission Controller
+OPA zostanie zintegrowane z Kubernetesem jako Admission Controller, co umożliwi kontrolę nad żądaniami tworzenia, modyfikowania oraz usuwania zasobów aplikacji w klastrze Kubernetes. Architektura integracji OPA obejmie:
+- Serwer OPA: OPA będzie działać jako serwer REST API, który będzie odpowiedzialny za ocenę zgodności żądań do klastra Kubernetes ze zdefiniowanymi politykami.
+- Polityki OPA: Zdefiniowane polityki będą określały, jakie operacje są dozwolone, a jakie nie, na podstawie analizy żądań do klastra Kubernetes. Polityki te stworzone zostaną oddzielnie od aplikacji i przechowywane będą na serwerze OPA.
+- Integracja z Kubernetesem: OPA będzie zintegrowane z API serwera Kubernetes poprzez mechanizm Admission Control, który umożliwi przekazywanie żądań do serwera OPA, weryfikację ich poprzez polityki OPA i następnie jeśli zostaną zaakceptowane, przekazanie do Kubernetesa.
+
+### Schemat architektury
+![Architektura aplikacji.png](images%2FArchitektura aplikacji.png)
+
+W architekturze widocznej na powyższym rysunku aplikacja biura turystycznego działa na klastrze Kubernetes i jest zintegrowane z OPA jako Admission Controller, który kontroluje żądania wchodzące do klastra. Polityki OPA definiują, które operacje są dozwolone, a które nie na podstawie analizy żądań do klastra Kubernetes.
+
+### Implementacja polityk
+
 
 ## Environment configuration description
+Wersja demonstracyjna działania systemu OPA wykorzystywać będzie system Windows 10 wraz z WSL 2 (Windows Subsystem for Linux) oraz Docker Desktop, który umożliwi lokalne uruchomienie oraz zarządzanie kontenerami w środowisku Kubernetes na potrzeby uruchomienia aplikacji, oraz zintegrowanie jej z systemem OPA.
 
 ## Installation method
 
