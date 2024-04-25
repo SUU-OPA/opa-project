@@ -45,7 +45,7 @@ OPA zostanie zintegrowane z Kubernetesem jako Admission Controller, co umożliwi
 - Integracja z Kubernetesem: OPA będzie zintegrowane z API serwera Kubernetes poprzez mechanizm Admission Control, który umożliwi przekazywanie żądań do serwera OPA, weryfikację ich poprzez polityki OPA i następnie jeśli zostaną zaakceptowane, przekazanie do Kubernetesa.
 
 ### Schemat architektury
-![Architektura aplikacji.png](images%2FArchitektura aplikacji.png)
+![Architektura aplikacji.png](images%2FArchitektura%20aplikacji.png)
 
 W architekturze widocznej na powyższym rysunku aplikacja biura turystycznego działa na klastrze Kubernetes i jest zintegrowane z OPA jako Admission Controller, który kontroluje żądania wchodzące do klastra. Polityki OPA definiują, które operacje są dozwolone, a które nie na podstawie analizy żądań do klastra Kubernetes.
 
