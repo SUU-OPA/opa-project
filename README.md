@@ -50,6 +50,75 @@ OPA zostanie zintegrowane z Kubernetesem jako Admission Controller, co umożliwi
 W architekturze widocznej na powyższym rysunku aplikacja biura turystycznego działa na klastrze Kubernetes i jest zintegrowane z OPA jako Admission Controller, który kontroluje żądania wchodzące do klastra. Polityki OPA definiują, które operacje są dozwolone, a które nie na podstawie analizy żądań do klastra Kubernetes.
 
 ### Implementacja polityk
+Wykorzystanie polityk może obejmować wszelkie operacje na zasobach. W kontekście prezentowanego case study pojawia się przechowywanie różnorodnych zasobów, ich replikacja i tworzenie namespace'ów, logicznie je grupujących. Funkcjonuje ponadto load balancing zapewniony przez serwis ingress. Z kolei same serwisy aplikacji, zdeployowane na kubernetes potrzebują autoryzacji. Przykładowymi zastosowaniami polityk mogą być zatem:
+
+-przyzwolenie na tworzenie podów zawierających obrazy kontenerów tylko z konkretnych rejestrów
+
+-zablokowanie pewnych operacji w wybranych namespace'ach.
+
+-polityki regulujące tworzenie serwisów ingress - przydział odpowiednich hostów do namespace'ców, przydział każdego hosta do jednego ingressu 
+
+-autoryzacja użytkowników, dopuszzczenie do funkjonalności konkretnego serwisu
+
+```rego
+package admission
+
+import future.keywords
+
+import rego.v1
+import future.keywords
+
+default deny = true
+
+deny := false if {
+    not any_wrong_registry
+}
+
+any_wrong_registry if {
+    some container
+    input_containers[container]
+	not startswith(container.image, "foo.com/")
+}
+
+input_containers contains container if {
+	container := input.request.object.spec.containers[_]
+}
+```
+
+```rego
+#przykład pochodzi z dokumentacji OPA
+package kubernetes.admission
+
+import rego.v1
+
+import data.kubernetes.namespaces
+
+operations := {"CREATE", "UPDATE"}
+
+deny contains msg if {
+	input.request.kind.kind == "Ingress"
+	operations[input.request.operation]
+	host := input.request.object.spec.rules[_].host
+	not fqdn_matches_any(host, valid_ingress_hosts)
+	msg := sprintf("invalid ingress host %q", [host])
+}
+
+valid_ingress_hosts := {host |
+	allowlist := namespaces[input.request.namespace].metadata.annotations["ingress-allowlist"]
+	hosts := split(allowlist, ",")
+	host := hosts[_]
+}
+
+fqdn_matches_any(str, patterns) if {
+	fqdn_matches(str, patterns[_])
+}
+```
+
+Wdrożenie polityk odbywa się poprzez stworzenie servera  OPA API. W tym celu należy przygotować kody polityk, zbudować bundle serwera OPA, na jego podstawie stworzyć serwer
+
+W przypadku polityk dodtyczących kubernetes trzeba jeszczezdeployować serwer jako admission controller. Warto dodać, że przy tym można zadbać o bezpieczeństwo kominikacji wykorzystując szyfrowanie komunikacji.
+
+Kwestia wykorzystania OPA do autoryzacji wymaga innego podejścia do Policy Agenta. Polega ono na odpytywaniu serwera REST API OPA, co do zgodności żądań HTTP z politykami.
 
 
 ## Environment configuration description
