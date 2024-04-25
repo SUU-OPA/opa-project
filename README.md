@@ -1,5 +1,10 @@
-# Open Policy Agent
-#### Jakub Radek, Edyta Paruch, Andrzej Starzyk, Roksana Cieśla
+# Środowiska Udostępniania Usług
+## Temat projektu - Open Policy Agent
+#### Autorzy
+- Jakub Radek
+- Edyta Paruch
+- Andrzej Starzyk
+- Roksana Cieśla
 
 ## Introduction
 Celem projektu jest przedstawienie możliwości technologii silnika Open Policy Agent - OPA w kontekście integracji z istniejącą aplikacją. W tym sprawozdaniu skupimy się na analizie procesu integracji OPA z istniejącą już aplikacją, obejmując projektowanie, implementację i ocenę sensowności oraz efektywności takiego rozwiązania. 
