@@ -126,6 +126,18 @@ Wersja demonstracyjna działania systemu OPA wykorzystywać będzie system Windo
 
 ## Installation method
 
+Do instalacji będzie wykorzystane oprogramowanie minikube
+
+- skopiuj plik dep3.yaml
+- uruchom terminal i przejdź do lokalizacji skopiowanego pliku
+- wpisz następujące komendy
+- minikube start
+- kubectl apply -f .\dep3.yaml
+- minikube service flask-app-service
+
+Aby usunąć konfigurację wyjdź z widoku serwisów za pomocą Ctl+C, 
+następnie kubectl delete -f .\dep3.yaml i minikube stop
+
 ## How to reproduce - step by step
 
 ## Infrastructure as Code approach
