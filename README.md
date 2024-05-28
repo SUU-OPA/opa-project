@@ -188,7 +188,7 @@ spec:
   type: LoadBalancer
 ```
 
-Takie podejście ułatwia kontrolę zmian i proste wdrażanie nowych wersji aplikacji. Obraz aplikacji został przygotowany zgodnie z podpunktem [7.1](#przygotowanie-obrazu-aplikacji), i jest przechowywany na repozytorium Docker Hub. Dzięki takiemu podejściu można łatwo powrócić do poprzednich wersji aplikacji w razie potrzeby. Dokładny proces wdrażania jej pokazano w rozdziale [6.2](#wdroenie-aplikacji).
+Takie podejście ułatwia kontrolę zmian i proste wdrażanie nowych wersji aplikacji. Obraz aplikacji został przygotowany zgodnie z podpunktem [7.1](#przygotowanie-obrazu-aplikacji), i jest przechowywany na repozytorium Docker Hub. Dzięki takiemu podejściu można łatwo powrócić do poprzednich wersji aplikacji w razie potrzeby. Dokładny proces wdrażania jej pokazano w rozdziale [6.2](#wdrożenie-aplikacji).
 
 ## Demo deployment steps
 
