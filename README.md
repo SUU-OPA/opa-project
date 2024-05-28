@@ -126,26 +126,194 @@ Wersja demonstracyjna działania systemu OPA wykorzystywać będzie system Windo
 
 ## Installation method
 
-Do instalacji będzie wykorzystane oprogramowanie minikube
-
-- skopiuj plik dep3.yaml
-- uruchom terminal i przejdź do lokalizacji skopiowanego pliku
-- wpisz następujące komendy
-- minikube start
-- kubectl apply -f .\dep3.yaml
-- minikube service flask-app-service
-
-Aby usunąć konfigurację wyjdź z widoku serwisów za pomocą Ctl+C, 
-następnie kubectl delete -f .\dep3.yaml i minikube stop
-
 ### Minikube i Kubernetes
-### Wdrożenie aplikacji
-### OPA jako Admission Controller
 
+Do instalacji będzie wykorzystane oprogramowanie Minikube, które umożliwia lokalne uruchomienie klastra Kubernetes.
+
+- Pobierz i zainstaluj Minikube
+- Zainstaluj Kubernetes CLI (kubectl)
+- Uruchom Minikube
+```rego
+minikube start
+```
+
+### Wdrożenie aplikacji
+
+- Skopiuj plik deploymentu dla aplikacji (’dep3.yaml’)
+-  Przejdź do katalogu, w którym znajduje się plik 'dep3.yaml' i wpisz komendę:
+```rego
+kubectl apply -f .\dep3.yaml
+```
+- Sprawdź status serwisu, uruchamiając:
+```rego
+minikube service flask-app-service
+```
+- To polecenie otworzy przeglądarkę z adresem URL, pod którym będzie dostępna aplikacja
+
+Aby usunąć konfigurację wyjdź z widoku serwisów za pomocą Ctl+C, następnie:
+```rego
+    kubectl delete -f .\dep3.yaml
+    minikube stop
+```
+
+### OPA jako Admission Controller
+W oparciiu o dokumentację https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/
+- Włącz dodatek Ingress w Minikube
+```rego
+minikube addons enable ingress
+```
+- Utwórz namespace, w którym będzie działać OPA
+```rego
+kubectl create namespace opa
+kubectl config set-context opa-tutorial --user minikube --cluster minikube --namespace opa
+kubectl config use-context opa-tutorial
+```
+- Wygeneruj certfikaty TLS
+```rego
+openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -sha256 -key ca.key -days 100000 -out ca.crt -subj "/CN=admission_ca"
+```
+- Wygeneruj klucz TLS i certyfikat dla OPA
+```rego
+cat >server.conf <<EOF
+[ req ]
+prompt = no
+req_extensions = v3_ext
+distinguished_name = dn
+
+[ dn ]
+CN = opa.opa.svc
+
+[ v3_ext ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, serverAuth
+subjectAltName = DNS:opa.opa.svc,DNS:opa.opa.svc.cluster,DNS:opa.opa.svc.cluster.local
+EOF
+
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -sha256 -out server.csr -extensions v3_ext -config server.conf
+openssl x509 -req -in server.csr -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 100000 -extensions v3_ext -extfile server.conf
+```
+- Utwórz secret, aby przechowywać poświadczenia TLS dla OPA
+```rego
+kubectl create secret tls opa-server --cert=server.crt --key=server.key --namespace opa
+```
+- Przejdź do katalogu z politykami, zbuduj i opublikuj OPA Bundle
+```rego
+cat > .manifest <<EOF
+{
+    "roots": ["kubernetes/admission", "system"]
+}
+EOF
+opa build -b .
+```
+- Uruchom serwer Nginx do obsługi OPA bundle
+```rego
+docker run --rm --name bundle-server -d -p 8888:80 -v ${PWD}:/usr/share/nginx/html:ro nginx:latest
+```
+- Przejdź do katalogu zawierającego plik 'admission-controller.yaml' i wdróż OPA jako Admission Controller
+```rego
+kubectl apply -f admission-controller.yaml
+```
+- Zarejestruj OPA jako Admission Controller
+```rego
+kubectl apply -f webhook-configuration.yaml
+```
 ## How to reproduce - step by step
 ### Przygotowanie obrazu aplikacji
+
+- Przejdź od folderu z kodem aplikacji, do folderu app, w którym znajduje się Dockerfile
+- wykonaj komendy:
+```rego
+docker build -t flask-app:latest.
+```
+- w celu przesłania do publicznego repozytorium na DockerHub zaloguj się za pomocą komędu docker login
+```rego
+docker tag flask-app dockerhub username/flask-app
+docker push dockerhub username/flask-app
+```
+
 ### Konfiguracja OPA
+Na podstawie dokumentacji https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/
+- pliku image-allowlist.rego w folderze policies przekopiuj kod
+```rego
+package kubernetes.admission
+
+import rego.v1
+
+import data.kubernetes.ingress
+
+deny contains msg if {
+    some container
+    input_containers[container]
+    not startswith(container.image, "docker.io/andrzejstarzyk/suu_")
+    image := container.image
+    msg := sprintf("invalid image registry %q", [image])
+}
+
+input_containers := {container |
+    container := input.request.object.spec.template.spec.containers[_]
+}
+```
+```rego
+opa build -b . lub opa\_windows\_amd64 build -b .
+```
+```rego
+docker run --rm --name bundle-server -d -p 8888:80 -v \${PWD}:/usr/share/nginx/html:ro nginx:latest
+```
+```rego
+kubectl apply -f admission-controller.yaml
+```
+```rego
+kubectl label ns kube-system openpolicyagent.org/webhook=ignore
+```
+```rego
+kubectl label ns opa openpolicyagent.org/webhook=ignore
+```
+```rego
+kubectl apply -f webhook-configuration.yaml
+```
+```rego
+kubectl create -f production-namespace.yaml
+```
+```rego
+kubectl apply -f dep2.yaml -n production
+```
+```rego
+kubectl apply -f dep3.yaml -n production
+```
+- Próba deployowania aplikacji z obazem pochodzącym z repozytorium niewymienionego w politykach poskutkuje wypisaniem komunikatu podobnego do
+```rego
+"Error from server: error when creating "dep2.yaml": admission webhook "validating-webhook.openpolicyagent.org" denied the request: invalid image registry "docker.io/andrzejstarzyk/suu\_project\_app:latest""
+```
+
 ### Zmiana polityk
+
+Plik .rego zawierają polityki, które można edytować, np. zmienić wymaganą nazwę repozytorium z obrazem. Po takiej zmianie należy wykonać następujące polecenia
+```rego
+kubectl apply -f webhook-configuration.yaml
+```
+```rego
+kubectl delete apply -f admission-controller.yaml 
+```
+- zakończ pracę bundle-server'a i wykonaj w terminalu polecenia
+```rego
+opa\_windows\_amd64 build -b .
+```
+```rego
+docker run --rm --name bundle-server -d -p 8888:80 -v \${PWD}:/usr/share/nginx/html:ro nginx:latest
+```
+```rego
+kubectl apply -f admission-controller.yaml
+```
+```rego
+kubectl apply -f webhook-configuration.yaml 
+```
+```rego
+kubectl apply -f dep3.yaml -n production
+```
+
 ### Infrastructure as Code approach
 
 W podejściu Infrastructure as Code (IaC) dążymy do automatyzacji i zarządzania infrastrukturą aplikacji za pomocą kodu. W ramach naszego projektu wdrażane zostają kluczowe aspekty IaC, zarówno  dla Open Policy Agent w roli Admission Controller'a, jak i dla samej aplikacji biura turystycznego.
