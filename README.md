@@ -138,9 +138,57 @@ Do instalacji będzie wykorzystane oprogramowanie minikube
 Aby usunąć konfigurację wyjdź z widoku serwisów za pomocą Ctl+C, 
 następnie kubectl delete -f .\dep3.yaml i minikube stop
 
-## How to reproduce - step by step
+### Minikube i Kubernetes
+### Wdrożenie aplikacji
+### OPA jako Admission Controller
 
-## Infrastructure as Code approach
+## How to reproduce - step by step
+### Przygotowanie obrazu aplikacji
+### Konfiguracja OPA
+### Zmiana polityk
+### Infrastructure as Code approach
+
+W podejściu Infrastructure as Code (IaC) dążymy do automatyzacji i zarządzania infrastrukturą aplikacji za pomocą kodu. W ramach naszego projektu wdrażane zostają kluczowe aspekty IaC, zarówno  dla Open Policy Agent w roli Admission Controller'a, jak i dla samej aplikacji biura turystycznego.
+
+Polityki **Open Policy Agent** są definiowane za pomocą deklaratywnego języka REGO, co pozwala na precyzyjne określenie dozwolonych operacji w infrastrukturze. Definiowane polityk za pomocą kodu źródłowego ułatwia ich zarządzanie i wersjonowalność. Szczegółowy proces wdrażania systemu OPA do infrastruktury został zaprezentowany w rozdziale [6.3](#opa-jako-admission-controller). Przykład wdrażania polityki został przedstawiony w rozdziale [7.2](#konfiguracja-opa). Wszelkie zmiany w tak zdefiniowanych politykach są proste, a ich realizację w systemie można wykonać, postępując zgodnie z rozdziałem [7.3](#zmiana-polityk).
+
+Podobnie zarządzanie i wdrażanie **aplikacji biura turystycznego** jest ułatwione, dzięki zastosowaniu zasad IaC. Konfiguracja aplikacji (deployment i serwis) jest zdefiniowana za pomocą pliku YAML (dep3.yaml):
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask
+        image: docker.io/andrzejstarzyk/suu_project_app:latest
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+spec:
+  selector:
+    app: flask-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer
+```
+
+Takie podejście ułatwia kontrolę zmian i proste wdrażanie nowych wersji aplikacji. Obraz aplikacji został przygotowany zgodnie z podpunktem [7.1](#przygotowanie-obrazu-aplikacji), i jest przechowywany na repozytorium Docker Hub. Dzięki takiemu podejściu można łatwo powrócić do poprzednich wersji aplikacji w razie potrzeby. Dokładny proces wdrażania jej pokazano w rozdziale [6.2](#wdroenie-aplikacji).
 
 ## Demo deployment steps
 
