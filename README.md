@@ -358,6 +358,103 @@ spec:
 
 Takie podejście ułatwia kontrolę zmian i proste wdrażanie nowych wersji aplikacji. Obraz aplikacji został przygotowany zgodnie z podpunktem [7.1](#przygotowanie-obrazu-aplikacji), i jest przechowywany na repozytorium Docker Hub. Dzięki takiemu podejściu można łatwo powrócić do poprzednich wersji aplikacji w razie potrzeby. Dokładny proces wdrażania jej pokazano w rozdziale [6.2](#wdrożenie-aplikacji).
 
+
+## Autoryzacja z OPA
+Oprócz opisanego powyżej zarządzania zasobami Kubernetes Open Policy Agent może zostać wykorzystany do autoryzacji. 
+W tym celu należy stworzyć serwer HTTP, do którego kierowane są zapytania dotyczące polityk dostępowych. 
+Z kolei aplikacja powinna wysyłać zapytania do tego serwera przed udostępnianiem zasobów. 
+Poniżej zostało opisane stworzenie serwera na Dockerze i kod aplikacji odpowiadający za autoryzację.
+
+## Konfiguracja
+
+- Stwórz plik docker-compose.yaml z następującą zawartością:
+```rego
+version: '2'
+services:
+  opa:
+    image: openpolicyagent/opa:0.65.0
+    ports:
+    - 8181:8181
+    # WARNING: OPA is NOT running with an authorization policy configured. This
+    # means that clients can read and write policies in OPA. If you are
+    # deploying OPA in an insecure environment, be sure to configure
+    # authentication and authorization on the daemon. See the Security page for
+    # details: https://www.openpolicyagent.org/docs/security.html.
+    command:
+    - "run"
+    - "--server"
+    - "--log-format=json-pretty"
+    - "--set=decision_logs.console=true"
+    - "--set=services.nginx.url=http://bundle_server"
+    - "--set=bundles.nginx.service=nginx"
+    - "--set=bundles.nginx.resource=wibit_auth_policies/bundle.tar.gz"
+    depends_on:
+    - bundle_server
+  api_server:
+    image: openpolicyagent/demo-restful-api:0.3
+    ports:
+    - 5000:5000
+    environment:
+    - OPA_ADDR=http://opa:8181
+    - POLICY_PATH=/v1/data/httpapi/authz
+    depends_on:
+    - opa
+  bundle_server:
+    image: nginx:1.20.0-alpine
+    ports:
+    - 8888:80
+    volumes:
+    - ./wibit_auth_policies:/usr/share/nginx/html/wibit_auth_policies
+```
+- Stwórz folder wibit_auth_policies, a w nim plik auth.rego
+
+```rego
+package httpapi.authz
+
+import rego.v1
+
+options := {"quick-trip": ["Marek"], "survey": [], "file": []}
+
+methods = ["GET", "POST"]
+
+default allow := false
+
+# Allow all users to get trip with survey.
+allow if {
+	methods[_] == input.method
+	input.option == "survey"
+}
+
+# Allow selected office workers to generate quick trip
+allow if {
+	methods[_] == input.method
+	input.option == "quick-trip"
+	options[input.option][_] == input.user
+}
+```
+- W terminalu, w stworzonym folderze, wywołaj komendę 
+```
+opa build auth.rego
+```
+- W  folderze z plikiem docker-compose.yaml wykonaj komendę 
+```
+docker-compose -f docker-compose.yaml up
+```
+
+## Wyniki
+
+Odmowa dostępu do szybkeij wycieczki dla niezalogowanego użytkownika
+
+![auth1.png](images%2Fauth1.png)
+
+Niezalogowany użytkownik ma dostęp do wycieczkej na podstawie ankietą (ścieżka /region jest pierwszą stroną ankiety
+
+![auth2.png](images%2Fauth2.png)
+Użytkownik zalogowany ma dostęp do szybkiej wycieczki
+![auth3.png](images%2Fauth3.png)
+Użytkownik zalogowany ma dostęp do wycieczki na podstawie ankiety
+![auth4.png](images%2Fauth4.png)
+
 ## Demo deployment steps
 
 ## Configuration set-up
