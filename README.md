@@ -441,9 +441,44 @@ opa build auth.rego
 docker-compose -f docker-compose.yaml up
 ```
 
-## Wyniki
 
-Odmowa dostępu do szybkeij wycieczki dla niezalogowanego użytkownika
+
+## Demo deployment steps
+Poniżej zostało zaprezentowane przykładowe wykorzystanie przedstawionych wyżej metod konfiguracji i wdrażania aplikacji oraz serwerów OPA.
+Na początku zainstaluj niezbędne oprogramowanie wymienione w punkcie 6.
+## Configuration set-up
+
+Jeżeli chcesz korzystać z obrazu aplikacji we własnym repozytorium dockerhub zacznij od kroku 7.1. Uwaga, konieczna będzie zmiana nazwy repozytorium w pliku dep3.yaml i plikach rego dopowiadających za polityki. W przeciwnym wypadku kontynuuj configurację. 
+
+Uruchom minikube w terminalu (minikube start).
+
+![auth1.png](images%)
+Ekran po instalacji + widock dockera
+
+
+Podążaj za krokami z punktu 6, stwórz deployment aplikacji.
+
+![auth1.png](images%)
+Screen z komendami w terminalu i działającej aplikacji
+
+Następnie wdróż OPA jako admission controller
+
+![auth1.png](images%)
+Screen z komendami w terminalu i dockera z deploymentami
+
+Wykonaj punkt 7.6 i skonfiguruj serwer OPA na potrzeby autoryzacji.
+
+![auth1.png](images%)
+Screen z komendami w terminalu i docker z deploymentami.
+## Data preparation
+
+## Execution procedure
+
+## Results presentation
+
+### Wyniki - autoryzacja
+
+Odmowa dostępu do szybkiej wycieczki dla niezalogowanego użytkownika
 
 ![auth1.png](images%2Fauth1.png)
 
@@ -454,16 +489,6 @@ Użytkownik zalogowany ma dostęp do szybkiej wycieczki
 ![auth3.png](images%2Fauth3.png)
 Użytkownik zalogowany ma dostęp do wycieczki na podstawie ankiety
 ![auth4.png](images%2Fauth4.png)
-
-## Demo deployment steps
-
-## Configuration set-up
-
-## Data preparation
-
-## Execution procedure
-
-## Results presentation
 
 ## Summary – conclusions
 
