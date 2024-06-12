@@ -58,7 +58,7 @@ Wykorzystanie polityk może obejmować wszelkie operacje na zasobach. W kontekś
 
 -polityki regulujące tworzenie serwisów ingress - przydział odpowiednich hostów do namespace'ców, przydział każdego hosta do jednego ingressu 
 
--autoryzacja użytkowników, dopuszzczenie do funkjonalności konkretnego serwisu
+-autoryzacja użytkowników, dopuszczenie do funkcjonalności konkretnego serwisu
 
 ```rego
 package admission
@@ -116,7 +116,7 @@ fqdn_matches_any(str, patterns) if {
 
 Wdrożenie polityk odbywa się poprzez stworzenie servera  OPA API. W tym celu należy przygotować kody polityk, zbudować bundle serwera OPA, na jego podstawie stworzyć serwer
 
-W przypadku polityk dodtyczących kubernetes trzeba jeszczezdeployować serwer jako admission controller. Warto dodać, że przy tym można zadbać o bezpieczeństwo kominikacji wykorzystując szyfrowanie komunikacji.
+W przypadku polityk dodtyczących kubernetes trzeba jeszcze zdeployować serwer jako admission controller. Warto dodać, że przy tym można zadbać o bezpieczeństwo kominikacji wykorzystując szyfrowanie komunikacji.
 
 Kwestia wykorzystania OPA do autoryzacji wymaga innego podejścia do Policy Agenta. Polega ono na odpytywaniu serwera REST API OPA, co do zgodności żądań HTTP z politykami.
 
@@ -444,11 +444,11 @@ docker-compose -f docker-compose.yaml up
 
 
 ## Demo deployment steps
-Poniżej zostało zaprezentowane przykładowe wykorzystanie przedstawionych wyżej metod konfiguracji i wdrażania aplikacji oraz serwerów OPA.
+Poniżej zostało zaprezentowane przykładowe wykorzystanie przedstawionych wyżej metod konfiguracji i wdrażanie aplikacji oraz serwerów OPA.
 Na początku zainstaluj niezbędne oprogramowanie wymienione w punkcie 6.
 ## Configuration set-up
 
-Jeżeli chcesz korzystać z obrazu aplikacji we własnym repozytorium dockerhub zacznij od kroku 7.1. Uwaga, konieczna będzie zmiana nazwy repozytorium w pliku dep3.yaml i plikach rego dopowiadających za polityki. W przeciwnym wypadku kontynuuj configurację. 
+Jeżeli chcesz korzystać z obrazu aplikacji we własnym repozytorium dockerhub zacznij od kroku 7.1. Uwaga, konieczna będzie zmiana nazwy repozytorium w pliku dep3.yaml i plikach rego dopowiadających za polityki. W przeciwnym wypadku kontynuuj konfigurację. 
 
 Uruchom minikube w terminalu (minikube start).
 
