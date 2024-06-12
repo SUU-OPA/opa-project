@@ -476,20 +476,44 @@ Screen z komendami w terminalu i docker z deploymentami.
 
 ## Results presentation
 
-### Wyniki - autoryzacja
+### Wyniki działania polityk OPA jako Kubernetes Admission Controller
+
+Do zaprezentowania działania OPA jako Admission Controller'a walidującego zasoby w środowisku Kubernetes stworzone zostały trzy polityki:
+ 
+ - **image-allowlist.rego** - odpowiada za ograniczenie możliwości deploymentu do takiego, który korzysta z obrazu z konkretnego, zdefiniowanego przez politykę bezpiecznego źródła, jeśli tak nie jest otrzymamy poniższy komunikat.
+![dep_denied_wrong_image_source.png](images%2Fdep_denied_wrong_image_source.png)
+ - **production-image-restriction.rego** - ogranicza możliwość uruchomienia deploymentu na namespace production do takiego obrazu, które posiada tag "stable", jeśli tak nie jest otrzymamy poniższy komunikat.
+![dep_denied_wrong_production_tag.png](images%2Fdep_denied_wrong_production_tag.png)
+ - **resource-limits.rego** - wymusza na deploymencie zdefiniowanie limitów na ilość pamięci oraz liczbę procesorów, a także definiuje ograniczenia na te zdefiniowane wartości.
+    
+   - Jeśli te ograniczenia nie są zdefiniowane, pojawi się nastepujący komunikat
+![dep_denied_no_limits_set.png](images%2Fdep_denied_no_limits_set.png)
+   - Z kolei, jeśli zdefiniowane limity nie mieszczą się w zakresie założonym w definicji polityki, otrzymamy poniższą wiadomość
+![dep_denied_wrong_limits_set.png](images%2Fdep_denied_wrong_limits_set.png)
+
+Powyższe komunikaty informują użytkownika o tym co należy zmienić, aby OPA pozwoliła na dokonanie deploymentu. Jeśli wszystkie warunki są spełnione, deployment powiedzie się.
+![dep_working.png](images%2Fdep_working.png)
+
+### Wyniki systemu autoryzacji
 
 Odmowa dostępu do szybkiej wycieczki dla niezalogowanego użytkownika
 
 ![auth1.png](images%2Fauth1.png)
 
-Niezalogowany użytkownik ma dostęp do wycieczkej na podstawie ankietą (ścieżka /region jest pierwszą stroną ankiety
+Niezalogowany użytkownik ma dostęp do wycieczki na podstawie ankiety (ścieżka /region jest pierwszą stroną ankiety)
 
 ![auth2.png](images%2Fauth2.png)
+
 Użytkownik zalogowany ma dostęp do szybkiej wycieczki
+
 ![auth3.png](images%2Fauth3.png)
+
 Użytkownik zalogowany ma dostęp do wycieczki na podstawie ankiety
+
 ![auth4.png](images%2Fauth4.png)
 
 ## Summary – conclusions
 
 ## References
+1. Dokumentacja Open Policy Agent [https://www.openpolicyagent.org/docs/latest](https://www.openpolicyagent.org/docs/latest) (term. wiz. 12.06.2024)
+2. Anik Barua , "Securing Kubernetes with Open Policy Agent (OPA)", [Medium](https://medium.com/@onixoni72/securing-kubernetes-with-open-policy-agent-opa-67167157d477) (term. wiz. 12.06.2024)
