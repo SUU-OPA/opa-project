@@ -514,11 +514,11 @@ Użytkownik zalogowany ma dostęp do wycieczki na podstawie ankiety
 
 ## Summary – conclusions
 
-Celem projektu było przedstawienie możliwości technologii Open Policy Agent (OPA) w kontekście integracji z istniejącą aplikacją. Przeprowadzono projektowanie, implementację i ocenę efektywności tego rozwiązania.
+Projekt miał na celu pokazanie możliwości technologii Open Policy Agent (OPA) poprzez jej integrację z istniejącą aplikacją. Proces ten obejmował projektowanie, wdrożenie oraz ocenę skuteczności tego rozwiązania.
 
-W ramach realizacji zintegrowano OPA z  aplikacją biura turystycznego działającą na Kubernetes, wykorzystując OPA jako Admission Controller. Zdefiniowano polityki w języku REGO, a następnie skonfigurowano OPA jako serwer REST API i zintegrowano go z API serwera Kubernetes. Wdrożono aplikację na Kubernetes, tworząc kontenery aplikacyjne oraz serwery API, którymi następnie zarządzano za pomocą polityk OPA. Przeprowadzono testy działania OPA, kontrolując dostęp i zarządzanie zasobami aplikacji zgodnie z przyjętymi politykami.
+W ramach realizacji zintegrowano OPA z aplikacją biura turystycznego działającą na Kubernetes, wykorzystując OPA jako Admission Controller. Skonfigurowano OPA jako serwer REST API, zintegrowano go z API serwera Kubernetes, a następnie zdefiniowano polityki w języku REGO. Wdrożono aplikację na Kubernetes, tworząc kontenery aplikacyjne oraz serwery API, które były zarządzane za pomocą reguł OPA. Przeprowadzono testy, kontrolując dostęp i zarządzanie zasobami aplikacji zgodnie z przyjętymi politykami.
 
-Integracja OPA umożliwiła elastyczne zarządzanie politykami i ich modyfikację bez konieczności zmiany kodu samej aplikacji. Przykłady zastosowanych polityk obejmowały ograniczenia dotyczące źródeł obrazów kontenerów oraz kontrolę dostępu do wybranych funkcjonalności aplikacji.
+Integracja OPA umożliwiła elastyczne zarządzanie politykami i ich modyfikację bez konieczności zmiany kodu samej aplikacji. Przykłady zastosowanych polityk obejmowały ograniczenia dotyczące źródeł obrazów kontenerów, wymogi związane z tagami obrazów w środowisku produkcyjnym oraz narzucanie limitów na zasoby. Dodatkowo przetestowano system autoryzacji OPA, kontrolując dostęp użytkowników do różnych funkcjonalności aplikacji.
 
 Podsumowując, integracja OPA z Kubernetesem okazała się skutecznym rozwiązaniem do zarządzania politykami i autoryzacją, znacząco poprawiając bezpieczeństwo i efektywność obsługi aplikacji w środowisku kontenerowym.
 
