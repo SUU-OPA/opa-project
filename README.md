@@ -514,6 +514,14 @@ Użytkownik zalogowany ma dostęp do wycieczki na podstawie ankiety
 
 ## Summary – conclusions
 
+Celem projektu było przedstawienie możliwości technologii Open Policy Agent (OPA) w kontekście integracji z istniejącą aplikacją. Przeprowadzono projektowanie, implementację i ocenę efektywności tego rozwiązania.
+
+W ramach realizacji zintegrowano OPA z  aplikacją biura turystycznego działającą na Kubernetes, wykorzystując OPA jako Admission Controller. Zdefiniowano polityki w języku REGO, a następnie skonfigurowano OPA jako serwer REST API i zintegrowano go z API serwera Kubernetes. Wdrożono aplikację na Kubernetes, tworząc kontenery aplikacyjne oraz serwery API, którymi następnie zarządzano za pomocą polityk OPA. Przeprowadzono testy działania OPA, kontrolując dostęp i zarządzanie zasobami aplikacji zgodnie z przyjętymi politykami.
+
+Integracja OPA umożliwiła elastyczne zarządzanie politykami i ich modyfikację bez konieczności zmiany kodu samej aplikacji. Przykłady zastosowanych polityk obejmowały ograniczenia dotyczące źródeł obrazów kontenerów oraz kontrolę dostępu do wybranych funkcjonalności aplikacji.
+
+Podsumowując, integracja OPA z Kubernetesem okazała się skutecznym rozwiązaniem do zarządzania politykami i autoryzacją, znacząco poprawiając bezpieczeństwo i efektywność obsługi aplikacji w środowisku kontenerowym.
+
 ## References
 1. Dokumentacja Open Policy Agent [https://www.openpolicyagent.org/docs/latest](https://www.openpolicyagent.org/docs/latest) (term. wiz. 12.06.2024)
 2. Anik Barua , "Securing Kubernetes with Open Policy Agent (OPA)", [Medium](https://medium.com/@onixoni72/securing-kubernetes-with-open-policy-agent-opa-67167157d477) (term. wiz. 12.06.2024)
