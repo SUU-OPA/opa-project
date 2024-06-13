@@ -452,24 +452,23 @@ Jeżeli chcesz korzystać z obrazu aplikacji we własnym repozytorium dockerhub 
 
 Uruchom minikube w terminalu (minikube start).
 
-![auth1.png](images%)
-Ekran po instalacji + widock dockera
 
+Podążaj za krokami z punktu 6.3 i wdróż OPA jako admission controller.
 
-Podążaj za krokami z punktu 6, stwórz deployment aplikacji.
-
-![auth1.png](images%)
-Screen z komendami w terminalu i działającej aplikacji
-
-Następnie wdróż OPA jako admission controller
-
-![auth1.png](images%)
-Screen z komendami w terminalu i dockera z deploymentami
+![auth1.png](images%2Fdemo1.png)
+![auth1.png](images%2Fdemo2.png)
 
 Wykonaj punkt 7.6 i skonfiguruj serwer OPA na potrzeby autoryzacji.
 
-![auth1.png](images%)
-Screen z komendami w terminalu i docker z deploymentami.
+![auth1.png](images%2Fdemo3.png)
+
+Wykonaj kroki opisane w punkcie 6.2 i , stwórz deployment aplikacji. Ostatecznie natępujące zasoby powinny zostać stowrzone
+
+![auth1.png](images%2Fdemo4.png)
+
+
+a aplikacja biura turystycznego powinna być dostępna
+![auth1.png](images%2Fdemo5.png)
 
 ## Results presentation
 
