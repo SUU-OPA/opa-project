@@ -470,9 +470,6 @@ Wykonaj punkt 7.6 i skonfiguruj serwer OPA na potrzeby autoryzacji.
 
 ![auth1.png](images%)
 Screen z komendami w terminalu i docker z deploymentami.
-## Data preparation
-
-## Execution procedure
 
 ## Results presentation
 
@@ -523,5 +520,7 @@ Integracja OPA umożliwiła elastyczne zarządzanie politykami i ich modyfikacj�
 Podsumowując, integracja OPA z Kubernetesem okazała się skutecznym rozwiązaniem do zarządzania politykami i autoryzacją, znacząco poprawiając bezpieczeństwo i efektywność obsługi aplikacji w środowisku kontenerowym.
 
 ## References
-1. Dokumentacja Open Policy Agent [https://www.openpolicyagent.org/docs/latest](https://www.openpolicyagent.org/docs/latest) (term. wiz. 12.06.2024)
-2. Anik Barua , "Securing Kubernetes with Open Policy Agent (OPA)", [Medium](https://medium.com/@onixoni72/securing-kubernetes-with-open-policy-agent-opa-67167157d477) (term. wiz. 12.06.2024)
+1. Dokumentacja Open Policy Agent [OPA](https://www.openpolicyagent.org/docs/latest) (term. wiz. 12.06.2024)
+2. Dokumentacja Kubernetes [Kubernetes](https://kubernetes.io/docs/home/) (term. wiz. 12.06.2024)
+3. Anik Barua , "Securing Kubernetes with Open Policy Agent (OPA)", [Medium](https://medium.com/@onixoni72/securing-kubernetes-with-open-policy-agent-opa-67167157d477) (term. wiz. 12.06.2024)
+4. "Deploying Python Flask Apps to Kubernetes" [Medium]([https://medium.com/@onixoni72/securing-kubernetes-with-open-policy-agent-opa-67167157d477](https://blog.developersteve.com/deploying-python-flask-apps-to-kubernetes-77c5c6f16bdd)) (term. wiz. 12.06.2024)
